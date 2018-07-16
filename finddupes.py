@@ -18,7 +18,8 @@ def options():  # pragma: no cover
 
     :return: Namespace of application arguments and options
     """
-    parser = argparse.ArgumentParser(description='Search for duplicated files across a directory structure.')
+    parser = argparse.ArgumentParser(
+        description='Search for duplicated files across a directory structure.')
     parser.add_argument('--min-size', type=int, default=DEFAULT_MIN_SIZE,
                         help='Minimum file size in bytes (files smaller than this will be skipped)')
     parser.add_argument('--max-size', type=int, default=DEFAULT_MAX_SIZE,
@@ -27,6 +28,8 @@ def options():  # pragma: no cover
                         help='Filename glob. Only files matching this pattern will be considered.')
     parser.add_argument('--followlinks', action="store_true", default=False,
                         help='Follow symlinks')
+    parser.add_argument('--json', action="store_true", default=False,
+                        help='Use JSON Output')
     parser.add_argument('path', type=str, help='The directory path to search')
     return parser.parse_args()
 
@@ -91,7 +94,8 @@ def hash_key(hashfunc=hashlib.md5):
                 # For now lets just do it all in one shot.
                 return hashfunc(fd.read()).digest()
         except OSError:
-            logger.warning(f"Skipping File (Could Not Open To Read): {entry.path}")
+            logger.warning(
+                f"Skipping File (Could Not Open To Read): {entry.path}")
 
     return _
 
@@ -130,7 +134,8 @@ def group_by_key(fileset, keyfunc, min_group_size=2):
         if key is None:
             continue
         files_by_key.setdefault(key, []).append(entry)
-    return [group for group in files_by_key.values() if len(group) >= min_group_size]
+    return [group for group in files_by_key.values() if
+            len(group) >= min_group_size]
 
 
 def group_by_hash(fileset, hashfunc=hashlib.md5, min_group_size=2):
@@ -146,10 +151,12 @@ def group_by_hash(fileset, hashfunc=hashlib.md5, min_group_size=2):
     :param min_group_size: minimum number of entries a group needs to be returned (default: 2)
     :return: lists of os.DirEntry instances grouped by hash value.
     """
-    return group_by_key(fileset, hash_key(hashfunc=hashfunc), min_group_size=min_group_size)
+    return group_by_key(fileset, hash_key(hashfunc=hashfunc),
+                        min_group_size=min_group_size)
 
 
-def group_by_size(fileset, min_size=DEFAULT_MIN_SIZE, max_size=DEFAULT_MAX_SIZE, min_group_size=2):
+def group_by_size(fileset, min_size=DEFAULT_MIN_SIZE, max_size=DEFAULT_MAX_SIZE,
+                  min_group_size=2):
     """ Takes a list of os.DirEntry instances (`fileset`) and optional file size bounds.
 
     This function groups the os.DirEntry instances in the `fileset` list by size
@@ -163,10 +170,12 @@ def group_by_size(fileset, min_size=DEFAULT_MIN_SIZE, max_size=DEFAULT_MAX_SIZE,
     :param min_group_size: minimum number of entries a group needs to be returned (default: 2)
     :return: lists of os.DirEntry instances grouped by size.
     """
-    return group_by_key(fileset, size_key(min_size=min_size, max_size=max_size), min_group_size=min_group_size)
+    return group_by_key(fileset, size_key(min_size=min_size, max_size=max_size),
+                        min_group_size=min_group_size)
 
 
-def find_dupe_files(path, glob=None, min_size=DEFAULT_MIN_SIZE, max_size=DEFAULT_MAX_SIZE, min_group_size=2):
+def find_dupe_files(path, glob=None, min_size=DEFAULT_MIN_SIZE,
+                    max_size=DEFAULT_MAX_SIZE, min_group_size=2):
     """ Walks `path` and returns a list of duplicated files in it.
 
     :param path: path string that we want to search.
@@ -178,16 +187,24 @@ def find_dupe_files(path, glob=None, min_size=DEFAULT_MIN_SIZE, max_size=DEFAULT
     """
     dir_iter = walk(path)
     if glob:
-        dir_iter = (entry for entry in dir_iter if fnmatch.fnmatch(entry.name, glob))
+        dir_iter = (entry for entry in dir_iter if
+                    fnmatch.fnmatch(entry.name, glob))
     dupes = []
-    for group in group_by_size(dir_iter, min_size=min_size, max_size=max_size, min_group_size=min_group_size):
+    for group in group_by_size(dir_iter, min_size=min_size, max_size=max_size,
+                               min_group_size=min_group_size):
         dupes.extend(group_by_hash(group, min_group_size=min_group_size))
     return dupes
 
 
 if __name__ == "__main__":
+    import json
+
     args = options()
-    for group in find_dupe_files(args.path, args.name, args.min_size, args.max_size):
-        for entry in group:
-            print(entry.path)
-        print()
+    dupes = find_dupe_files(args.path, args.name, args.min_size, args.max_size)
+    if args.json:
+        print(json.dumps([[entry.path for entry in d] for d in dupes]))
+    else:
+        for group in dupes:
+            for entry in group:
+                print(entry.path)
+            print()

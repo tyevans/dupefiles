@@ -22,6 +22,7 @@ Walk a path and list all duplicate files.
       --name NAME          Filename glob. Only files matching this pattern will be
                            considered.
       --followlinks        Follow symlinks
+      --json               Use JSON Output
 
 
 ### Example Usage:
