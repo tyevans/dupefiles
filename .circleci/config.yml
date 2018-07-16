@@ -43,7 +43,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            python -m pytest --cov --flake8 --junitxml=test-reports/junit.xml
+            python -m pytest --cov --flake8 --junitxml=test-reports/junit.xml --ignore venv
 
       - store_test_results:
           path: test-reports

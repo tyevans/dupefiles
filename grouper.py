@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import argparse
-import collections
 import hashlib
 import os
 import fnmatch
