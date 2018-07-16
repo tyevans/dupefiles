@@ -1,4 +1,4 @@
-#finddupes
+# finddupes
 
 Walk a path and list all duplicate files.
 
