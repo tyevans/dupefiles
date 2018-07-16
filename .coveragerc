@@ -3,6 +3,7 @@
 branch = True
 
 [report]
+fail_under = 95.0
 omit =
     */venv/*
     */test_*.py
