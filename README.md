@@ -1,6 +1,8 @@
-# finddupes
+# finddupes 
 
 Walk a path and list all duplicate files.
+
+[![CircleCI](https://circleci.com/gh/tyevans/dupefiles.svg?style=svg)](https://circleci.com/gh/tyevans/dupefiles)
 
     usage: finddupes.py [-h] [--min-size MIN_SIZE] [--max-size MAX_SIZE]
                         [--name NAME] [--followlinks]
