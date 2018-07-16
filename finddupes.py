@@ -134,10 +134,10 @@ def group_by_key(fileset, keyfunc, min_group_size=2):
 
 
 def group_by_hash(fileset, hashfunc=hashlib.md5, min_group_size=2):
-    """ Takes a list of os.DirEntry instances and an optional hash function.
+    """ Takes a list of os.DirEntry instances (`fileset`) and an optional hash function.
 
     This function groups the os.DirEntry instances in the `fileset` list by hash (using `hashfunc`)
-    and return lists of os.DirEntry instances, grouped by hash.
+    and returns lists of os.DirEntry instances, grouped by hash.
 
     Only groups larger than `min_group_size` are returned.
 
@@ -150,7 +150,12 @@ def group_by_hash(fileset, hashfunc=hashlib.md5, min_group_size=2):
 
 
 def group_by_size(fileset, min_size=DEFAULT_MIN_SIZE, max_size=DEFAULT_MAX_SIZE, min_group_size=2):
-    """
+    """ Takes a list of os.DirEntry instances (`fileset`) and optional file size bounds.
+
+    This function groups the os.DirEntry instances in the `fileset` list by size
+    and returns lists of os.DirEntry instances, grouped by their file size.
+
+    Only groups larger than `min_group_size` are returned.
 
     :param fileset: A list of os.DirEntry instances to group.
     :param min_size: minimum file size in bytes (files smaller than this will be ignored)
@@ -162,7 +167,7 @@ def group_by_size(fileset, min_size=DEFAULT_MIN_SIZE, max_size=DEFAULT_MAX_SIZE,
 
 
 def find_dupe_files(path, glob=None, min_size=DEFAULT_MIN_SIZE, max_size=DEFAULT_MAX_SIZE, min_group_size=2):
-    """
+    """ Walks `path` and returns a list of duplicated files in it.
 
     :param path: path string that we want to search.
     :param glob: glob string used to filter the fileset.
