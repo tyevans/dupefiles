@@ -172,10 +172,10 @@ def find_dupe_files(path, glob=None, min_size=DEFAULT_MIN_SIZE, max_size=DEFAULT
     :return: lists of os.DirEntry instances pointing to duplicated files.
     """
     dir_iter = walk(path)
+    if glob:
+        dir_iter = (entry for entry in dir_iter if fnmatch.fnmatch(entry.name, glob))
     dupes = []
     for group in group_by_size(dir_iter, min_size=min_size, max_size=max_size, min_group_size=min_group_size):
-        if glob:
-            group = (entry for entry in group if fnmatch.fnmatch(entry.name, glob))
         dupes.extend(group_by_hash(group, min_group_size=min_group_size))
     return dupes
 
