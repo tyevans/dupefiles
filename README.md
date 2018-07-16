@@ -2,7 +2,6 @@
 
 Walk a path and list all duplicate files.
 
-    python finddupes.py -h
     usage: finddupes.py [-h] [--min-size MIN_SIZE] [--max-size MAX_SIZE]
                         [--name NAME] [--followlinks]
                         path
@@ -21,3 +20,22 @@ Walk a path and list all duplicate files.
       --name NAME          Filename glob. Only files matching this pattern will be
                            considered.
       --followlinks        Follow symlinks
+
+
+### Example Usage:
+    
+    python finddupes.py ./test_data
+    ./test_data\12bytes.txt
+    ./test_data\dir1\12bytes.txt
+    ./test_data\dir1\folder\12bytes.txt
+    ./test_data\dirb\12bytes.txt
+    
+    ./test_data\8bytes.txt
+    ./test_data\dir1\8bytes.txt
+    ./test_data\dir1\folder\8bytes.txt
+    ./test_data\dirb\8bytes.txt
+    
+    ./test_data\empty.txt
+    ./test_data\dir1\empty.txt
+    ./test_data\dir1\folder\empty.txt
+    ./test_data\dirb\empty.txt
