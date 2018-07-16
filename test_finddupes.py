@@ -13,6 +13,15 @@ from finddupes import find_dupe_files, group_by_size, walk, group_by_hash
 TEST_DATA_DIR = './test_data'
 
 
+class TestWalk(TestCase):
+
+    def test_walk_invalid_dir(self):
+        self.assertEqual([], list(walk('doesnt/exist/')))
+
+    def test_walk_file(self):
+        self.assertEqual([], list(walk('requirements.txt')))
+
+
 class TestGroupBySize(TestCase):
 
     def test_group_files(self):

@@ -13,7 +13,7 @@ DEFAULT_MIN_SIZE = 0
 DEFAULT_MAX_SIZE = 1000000000
 
 
-def options():
+def options(): # pragma: no cover
     """ Parse command line arguments and return them
 
     :return: Namespace of application arguments and options
