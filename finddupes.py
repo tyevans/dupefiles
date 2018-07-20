@@ -77,6 +77,14 @@ def walk(path, followlinks=False):
         for entry in walk(directory):
             yield entry
 
+def read_chunks(file_object, chunk_size=1024):
+    """Lazy function (generator) to read a file piece by piece.
+    Default chunk size: 1k."""
+    while True:
+        data = file_object.read(chunk_size)
+        if not data:
+            break
+        yield data
 
 def hash_key(hashfunc=hashlib.md5):
     """ Returns a function that uses `hashfunc` to hash files and return the generated hash in bytes.
@@ -90,12 +98,13 @@ def hash_key(hashfunc=hashlib.md5):
     def _(_file):
         try:
             with open(_file.path, 'rb') as fd:
-                # For particularly large files we should read in chunks and update the hash function.
-                # For now lets just do it all in one shot.
-                return hashfunc(fd.read()).digest()
-        except OSError:
+                _h = hashfunc()
+                for chunk in read_chunks(fd):
+                    _h.update(chunk)
+                return _h.digest()
+        except (OSError, PermissionError):
             logger.warning(
-                f"Skipping File (Could Not Open To Read): {entry.path}")
+                f"Skipping File (Could Not Open To Read): {_file.path}")
 
     return _
 
