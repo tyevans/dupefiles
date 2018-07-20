@@ -57,7 +57,9 @@ def walk(path, followlinks=False, globs=None, exclusion_globs=None):
     walk_dirs = []
     with path_iter:
         for entry in path_iter:
-            if exclusion_globs and any(fnmatch.fnmatch(entry.name, glob) for glob in exclusion_globs):
+            if exclusion_globs and any(
+                    fnmatch.fnmatch(entry.name, glob) for glob in
+                    exclusion_globs):
                 continue
             if entry.is_dir():
                 if followlinks:
@@ -75,11 +77,13 @@ def walk(path, followlinks=False, globs=None, exclusion_globs=None):
                 if walk_into:
                     walk_dirs.append(entry.path)
             if entry.is_file():
-                if not globs or any(fnmatch.fnmatch(entry.name, glob) for glob in globs):
+                if not globs or any(
+                        fnmatch.fnmatch(entry.name, glob) for glob in globs):
                     yield entry
 
     for directory in walk_dirs:
-        for entry in walk(directory, followlinks=followlinks, globs=globs, exclusion_globs=exclusion_globs):
+        for entry in walk(directory, followlinks=followlinks, globs=globs,
+                          exclusion_globs=exclusion_globs):
             yield entry
 
 
@@ -190,7 +194,8 @@ def group_by_size(fileset, min_size=DEFAULT_MIN_SIZE, max_size=DEFAULT_MAX_SIZE,
                         min_group_size=min_group_size)
 
 
-def find_dupe_files(path, globs=None, exclusion_globs=None, min_size=DEFAULT_MIN_SIZE,
+def find_dupe_files(path, globs=None, exclusion_globs=None,
+                    min_size=DEFAULT_MIN_SIZE,
                     max_size=DEFAULT_MAX_SIZE, min_group_size=2):
     """ Walks `path` and returns a list of duplicated files in it.
 
@@ -215,7 +220,8 @@ if __name__ == "__main__":
 
     args = options()
     print(args.exclude)
-    dupes = find_dupe_files(args.path, args.name, args.exclude, args.min_size, args.max_size)
+    dupes = find_dupe_files(args.path, args.name, args.exclude, args.min_size,
+                            args.max_size)
     if args.json:
         print(json.dumps([[entry.path for entry in d] for d in dupes]))
     else:
