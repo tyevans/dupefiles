@@ -2,14 +2,6 @@ from unittest import TestCase
 
 from finddupes import find_dupe_files, group_by_size, walk, group_by_hash
 
-# def group_by_size(fileset, min_size=DEFAULT_MIN_SIZE, max_size=DEFAULT_MAX_SIZE):
-#     files_by_size = {}
-#     for entry in fileset:
-#         size = entry.stat().st_size
-#         if min_size <= size <= max_size:
-#             files_by_size.setdefault(size, []).append(entry)
-#     return [group for group in files_by_size.values() if len(group) > 1]
-
 TEST_DATA_DIR = './test_data'
 
 
