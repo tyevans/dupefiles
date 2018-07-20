@@ -99,3 +99,10 @@ class TestFindDupes(TestCase):
         for group in groups:
             self.assertEqual(len(group), 4)
             self.assertEqual(group[0].name, '8bytes.txt')
+
+    def test_exclusion_glob(self):
+        groups = find_dupe_files(TEST_DATA_DIR, exclusion_globs=['*.txt'], min_group_size=1)
+        self.assertEqual(len(groups), 1)
+        for group in groups:
+            self.assertEqual(len(group), 1)
+            self.assertEqual(group[0].name, 'unique.gif')
