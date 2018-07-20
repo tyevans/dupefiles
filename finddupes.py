@@ -24,8 +24,10 @@ def options():  # pragma: no cover
                         help='Minimum file size in bytes (files smaller than this will be skipped)')
     parser.add_argument('--max-size', type=int, default=DEFAULT_MAX_SIZE,
                         help='Maximum file size in bytes (files larger than this will be skipped)')
-    parser.add_argument('--name', default=None,
+    parser.add_argument('--name', default=None, nargs='+',
                         help='Filename glob. Only files matching this pattern will be considered.')
+    parser.add_argument('--exclude', default=None, nargs='+',
+                        help='Filename glob of directories or files to exclude')
     parser.add_argument('--followlinks', action="store_true", default=False,
                         help='Follow symlinks')
     parser.add_argument('--json', action="store_true", default=False,
@@ -34,7 +36,7 @@ def options():  # pragma: no cover
     return parser.parse_args()
 
 
-def walk(path, followlinks=False):
+def walk(path, followlinks=False, globs=None, exclusion_globs=None):
     """ Iterates over `path` and yields os.DirEntry objects for every file in the path.
 
     this is similar to:
@@ -55,6 +57,8 @@ def walk(path, followlinks=False):
     walk_dirs = []
     with path_iter:
         for entry in path_iter:
+            if exclusion_globs and any(fnmatch.fnmatch(entry.name, glob) for glob in exclusion_globs):
+                continue
             if entry.is_dir():
                 if followlinks:
                     walk_into = True
@@ -71,10 +75,11 @@ def walk(path, followlinks=False):
                 if walk_into:
                     walk_dirs.append(entry.path)
             if entry.is_file():
-                yield entry
+                if not globs or any(fnmatch.fnmatch(entry.name, glob) for glob in globs):
+                    yield entry
 
     for directory in walk_dirs:
-        for entry in walk(directory):
+        for entry in walk(directory, followlinks=followlinks, globs=globs, exclusion_globs=exclusion_globs):
             yield entry
 
 
@@ -185,21 +190,19 @@ def group_by_size(fileset, min_size=DEFAULT_MIN_SIZE, max_size=DEFAULT_MAX_SIZE,
                         min_group_size=min_group_size)
 
 
-def find_dupe_files(path, glob=None, min_size=DEFAULT_MIN_SIZE,
+def find_dupe_files(path, globs=None, exclusion_globs=None, min_size=DEFAULT_MIN_SIZE,
                     max_size=DEFAULT_MAX_SIZE, min_group_size=2):
     """ Walks `path` and returns a list of duplicated files in it.
 
     :param path: path string that we want to search.
-    :param glob: glob string used to filter the fileset.
+    :param globs: A list of glob strings used to filter the fileset.
+    :param exclusion_globs: Files matching globs in this list will not be evaluated.
     :param min_size: minimum file size in bytes (files smaller than this will be ignored)
     :param max_size: maximum file size in bytes (files larger than this will be ignored)
     :param min_group_size: minimum number of entries a group needs to be returned (default: 2)
     :return: lists of os.DirEntry instances pointing to duplicated files.
     """
-    dir_iter = walk(path)
-    if glob:
-        dir_iter = (entry for entry in dir_iter if
-                    fnmatch.fnmatch(entry.name, glob))
+    dir_iter = walk(path, globs=globs, exclusion_globs=exclusion_globs)
     dupes = []
     for group in group_by_size(dir_iter, min_size=min_size, max_size=max_size,
                                min_group_size=min_group_size):
@@ -211,7 +214,8 @@ if __name__ == "__main__":
     import json
 
     args = options()
-    dupes = find_dupe_files(args.path, args.name, args.min_size, args.max_size)
+    print(args.exclude)
+    dupes = find_dupe_files(args.path, args.name, args.exclude, args.min_size, args.max_size)
     if args.json:
         print(json.dumps([[entry.path for entry in d] for d in dupes]))
     else:
