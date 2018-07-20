@@ -153,7 +153,7 @@ def group_by_key(fileset, keyfunc, min_group_size=2, workers=16):
     pool = ThreadPool(workers)
 
     def evaluate(entry):
-        return (keyfunc(entry), entry)
+        return keyfunc(entry), entry
 
     keyed_fileset = pool.map(evaluate, fileset)
     files_by_key = {}
