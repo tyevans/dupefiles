@@ -42,3 +42,18 @@ Walk a path and list all duplicate files.
     ./test_data\dir1\empty.txt
     ./test_data\dir1\folder\empty.txt
     ./test_data\dirb\empty.txt
+
+### Running the tests
+
+You'll need to install the dev dependencies first:
+
+```
+$ pip install pipenv
+$ pipenv install --dev
+```
+
+To run the tests:
+
+```
+pipenv run python -m pytest --cov --flake8
+```
