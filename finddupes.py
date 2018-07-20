@@ -110,7 +110,7 @@ def hash_key(hashfunc=hashlib.md5):
         try:
             with open(_file.path, 'rb') as fd:
                 _h = hashfunc()
-                for chunk in read_chunks(fd):
+                for chunk in read_chunks(fd, chunk_size=1024*1024*10):
                     _h.update(chunk)
                 return _h.digest()
         except (OSError, PermissionError):
