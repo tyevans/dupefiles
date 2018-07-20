@@ -77,6 +77,7 @@ def walk(path, followlinks=False):
         for entry in walk(directory):
             yield entry
 
+
 def read_chunks(file_object, chunk_size=1024):
     """Lazy function (generator) to read a file piece by piece.
     Default chunk size: 1k."""
@@ -85,6 +86,7 @@ def read_chunks(file_object, chunk_size=1024):
         if not data:
             break
         yield data
+
 
 def hash_key(hashfunc=hashlib.md5):
     """ Returns a function that uses `hashfunc` to hash files and return the generated hash in bytes.
