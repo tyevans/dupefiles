@@ -219,7 +219,6 @@ if __name__ == "__main__":
     import json
 
     args = options()
-    print(args.exclude)
     dupes = find_dupe_files(args.path, args.name, args.exclude, args.min_size,
                             args.max_size)
     if args.json:
