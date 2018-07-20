@@ -87,14 +87,14 @@ class TestFindDupes(TestCase):
             self.assertTrue(group[0].name in ["8bytes.txt", "12bytes.txt"])
 
     def test_glob(self):
-        groups = find_dupe_files(TEST_DATA_DIR, glob='*.gif', min_group_size=1)
+        groups = find_dupe_files(TEST_DATA_DIR, globs=['*.gif'], min_group_size=1)
         self.assertEqual(len(groups), 1)
         for group in groups:
             self.assertEqual(len(group), 1)
             self.assertEqual(group[0].name, 'unique.gif')
 
     def test_glob_and_size(self):
-        groups = find_dupe_files(TEST_DATA_DIR, glob='*.txt', min_size=7, max_size=9)
+        groups = find_dupe_files(TEST_DATA_DIR, globs=['*.txt'], min_size=7, max_size=9)
         self.assertEqual(len(groups), 1)
         for group in groups:
             self.assertEqual(len(group), 4)
